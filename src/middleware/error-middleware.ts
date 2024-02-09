@@ -1,6 +1,12 @@
-import ResponseError from "./../error/response-error.js";
+import ResponseError from "../error/response-error";
+import { Request, Response, NextFunction } from "express";
 
-export const errorMiddleware = (err, req, res, next) => {
+export const errorMiddleware = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (!err) {
     next();
     return;
