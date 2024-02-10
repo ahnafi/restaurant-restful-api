@@ -18,7 +18,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const request = req.body;
-    const token = await userServices.register(request);
+    const token = await userServices.login(request);
     res.status(200).json({
       status: "success",
       message: "User successfully login.",
