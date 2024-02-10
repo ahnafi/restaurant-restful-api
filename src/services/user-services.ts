@@ -20,7 +20,7 @@ const checkUserInDatabase = async (username?: string, email?: string) => {
 };
 
 const register = async (request: req): Promise<create> => {
-  request = validate(registerUserValidation, register);
+  request = validate(registerUserValidation, request);
 
   if (await checkUserInDatabase(request.username, request.email))
     throw new ResponseError(409, "Username or email is already in use.");
