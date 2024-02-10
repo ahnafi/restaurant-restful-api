@@ -1,6 +1,6 @@
 import { registerUserValidation } from "../validation/user-validation";
 import { validate } from "../validation/validate";
-import { create, req } from "../types/user-types";
+import { UserRegistrationResult, RegisterRequest } from "../types/user-types";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
 
@@ -19,7 +19,7 @@ const checkUserInDatabase = async (username?: string, email?: string) => {
   });
 };
 
-const register = async (request: req): Promise<create> => {
+const register = async (request:RegisterRequest): Promise<UserRegistrationResult> => {
   request = validate(registerUserValidation, request);
 
   if (await checkUserInDatabase(request.username, request.email))

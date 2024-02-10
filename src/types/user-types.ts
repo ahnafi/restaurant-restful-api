@@ -1,4 +1,4 @@
-export interface req {
+export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
@@ -7,7 +7,7 @@ export interface req {
   address: string;
 }
 
-export interface create {
+export interface UserRegistrationResult {
   id: number;
   username: string;
   email: string;
