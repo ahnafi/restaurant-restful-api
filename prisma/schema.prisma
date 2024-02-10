@@ -29,7 +29,7 @@ model Profile {
   phone    String @db.VarChar(20)
   address  String @db.VarChar(250)
 
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int  @unique
 
   @@map("profiles")
@@ -41,9 +41,9 @@ enum Role {
 }
 
 model Menu {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  description String?  @db.VarChar(250)
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  description String?   @db.VarChar(250)
   //
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  Int
