@@ -16,14 +16,16 @@ export const errorMiddleware = (
     res
       .status(err.status)
       .json({
-        errors: err.message,
+        status: "error",
+        message: err.message,
       })
       .end();
   } else {
     res
       .status(500)
       .json({
-        errors: err.message,
+        status: "error",
+        message: err.message,
       })
       .end();
   }
