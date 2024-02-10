@@ -1,4 +1,4 @@
-import { removeUser } from "./utils";
+import { createUser, removeUser } from "./utils";
 import supertest from "supertest";
 import { app } from "../src/app/app";
 import { logger } from "../src/app/logging.ts";
@@ -56,5 +56,60 @@ describe("register user POST /user/register", () => {
 
     expect(user.status).toBe(409);
     logger.info(user.body.message);
+  });
+});
+
+describe("login user - POST /user/", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+  afterEach(async () => {
+    await removeUser();
+  });
+
+  it("should can login", async () => {
+    const token = await supertest(app).post("/user").send({
+      email: "john@example.com",
+      password: "password123",
+    });
+
+    logger.info(token.body);
+    expect(token.status).toBe(200);
+    expect(token.body.data.token).toBeDefined();
+    logger.info(token.body.data);
+  });
+  it("should cant login because password is wrong", async () => {
+    const token = await supertest(app).post("/user").send({
+      email: "john@example.com",
+      password: "password12345",
+    });
+
+    logger.info(token.body);
+    expect(token.status).toBe(404);
+    // expect(token.body.data.token).toBeUndefined();
+    logger.info(token.body.data);
+  });
+  it("should cant login because password and email is not correct", async () => {
+    const token = await supertest(app).post("/user").send({
+      email: "johnajahlaj",
+      password: "pass",
+    });
+
+    logger.info(token.body);
+    expect(token.status).toBe(400);
+    // expect(token.body.data.token).toBeDefined();
+    logger.info(token.body.data);
+  });
+
+  it("should cant login because email is wrong", async () => {
+    const token = await supertest(app).post("/user").send({
+      email: "john123@example.com",
+      password: "password123",
+    });
+
+    logger.info(token.body);
+    expect(token.status).toBe(404);
+    // expect(token.body.data.token).toBeUndefined();
+    logger.info(token.body.data);
   });
 });
