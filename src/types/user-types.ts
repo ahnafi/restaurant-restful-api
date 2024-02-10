@@ -7,8 +7,13 @@ export interface RegisterRequest {
   address: string;
 }
 
-export interface UserRegistrationResult {
+export interface RegistrationResult {
   id: number;
   username: string;
   email: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
 }

@@ -1,29 +1,40 @@
-import { registerUserValidation } from "../validation/user-validation";
+import {
+  loginUserValidation,
+  registerUserValidation,
+} from "../validation/user-validation";
 import { validate } from "../validation/validate";
-import { UserRegistrationResult, RegisterRequest } from "../types/user-types";
+import {
+  RegistrationResult,
+  RegisterRequest,
+  LoginRequest,
+} from "../types/user-types";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
+import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
 
-const checkUserInDatabase = async (username?: string, email?: string) => {
-  return prisma.user.findFirst({
+const register = async (
+  request: RegisterRequest
+): Promise<RegistrationResult> => {
+  request = validate(registerUserValidation, request);
+
+  const checkUserInDatabase = await prisma.user.findFirst({
     where: {
       OR: [
         {
-          username,
+          username: request.username,
         },
         {
-          email,
+          email: request.email,
         },
       ],
     },
   });
-};
 
-const register = async (request:RegisterRequest): Promise<UserRegistrationResult> => {
-  request = validate(registerUserValidation, request);
-
-  if (await checkUserInDatabase(request.username, request.email))
+  if (checkUserInDatabase)
     throw new ResponseError(409, "Username or email is already in use.");
+
+  request.password = await bcrypt.hash(request.password, 10);
 
   const user = await prisma.user.create({
     data: {
@@ -50,6 +61,30 @@ const register = async (request:RegisterRequest): Promise<UserRegistrationResult
   return user;
 };
 
+const login = async (request: LoginRequest): Promise<string> => {
+  request = validate(loginUserValidation, request);
+
+  const checkUserInDatabase = await prisma.user.findUnique({
+    where: {
+      email: request.email,
+    },
+  });
+
+  if (!checkUserInDatabase)
+    throw new ResponseError(404, "email or password is wrong");
+
+  const checkPassword = await bcrypt.compare(
+    request.password,
+    checkUserInDatabase.password
+  );
+
+  if (!checkPassword)
+    throw new ResponseError(404, "email or password is wrong");
+
+  return uuid();
+};
+
 export default {
   register,
+  login,
 };

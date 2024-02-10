@@ -9,4 +9,9 @@ const registerUserValidation = Joi.object({
   phone_number: Joi.string().min(0).max(20).required(),
 });
 
-export { registerUserValidation };
+const loginUserValidation = Joi.object({
+  email: Joi.string().email().max(100).required(),
+  password: Joi.string().min(8).max(100).required(),
+});
+
+export { registerUserValidation, loginUserValidation };
