@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import userServices from "../services/user-services";
+import { auth } from "../types/user-types";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,7 +23,24 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: "success",
       message: "User successfully login.",
-      data: { token },
+      data:  token ,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const logout = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token: string | undefined = req.get("Authorization");
+    await userServices.logout(token);
+    res.status(200).json({
+      status: "success",
+      message: "User successfully logout.",
     });
   } catch (error) {
     next(error);
@@ -32,4 +50,5 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 export default {
   register,
   login,
+  logout,
 };

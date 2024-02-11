@@ -7,11 +7,13 @@ import {
   RegistrationResult,
   RegisterRequest,
   LoginRequest,
+  auth,
 } from "../types/user-types";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
+import { getUserByToken } from "./services";
 
 const register = async (
   request: RegisterRequest
@@ -61,7 +63,7 @@ const register = async (
   return user;
 };
 
-const login = async (request: LoginRequest): Promise<string> => {
+const login = async (request: LoginRequest): Promise<any> => {
   request = validate(loginUserValidation, request);
 
   const checkUserInDatabase = await prisma.user.findUnique({
@@ -81,10 +83,36 @@ const login = async (request: LoginRequest): Promise<string> => {
   if (!checkPassword)
     throw new ResponseError(404, "email or password is wrong");
 
-  return uuid();
+  return prisma.user.update({
+    where: {
+      id: checkUserInDatabase.id,
+    },
+    data: {
+      token: uuid(),
+    },
+    select: {
+      token: true,
+    },
+  });
+};
+
+const logout = async (token: string | undefined): Promise<void> => {
+  if (!token) throw new ResponseError(404, "Unauthorized");
+
+  const data: auth | null = await getUserByToken(token);
+
+  if (!data) throw new ResponseError(404, "Unauthorized");
+
+  await prisma.user.update({
+    where: { id: data.id },
+    data: {
+      token: null,
+    },
+  });
 };
 
 export default {
   register,
   login,
+  logout,
 };

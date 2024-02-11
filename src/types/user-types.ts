@@ -17,3 +17,12 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
+
+export interface auth {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  token?: string | null;
+  role?: "ADMIN" | "USER";
+}
