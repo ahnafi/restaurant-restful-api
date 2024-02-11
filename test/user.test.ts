@@ -1,7 +1,8 @@
-import { createUser, removeUser } from "./utils";
+import { createUser, loginUserToken, removeUser } from "./utils";
 import supertest from "supertest";
 import { app } from "../src/app/app";
 import { logger } from "../src/app/logging.ts";
+import { prisma } from "../src/app/database.ts";
 
 describe("register user POST /user/register", () => {
   afterEach(async () => {
@@ -111,5 +112,59 @@ describe("login user - POST /user/", () => {
     expect(token.status).toBe(404);
     // expect(token.body.data.token).toBeUndefined();
     logger.info(token.body.data);
+  });
+});
+
+describe("logout user PUT /user", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+  afterEach(async () => {
+    await removeUser();
+  });
+
+  it("should can logout", async () => {
+    const token = await loginUserToken();
+    console.log(token);
+    const logout = await supertest(app)
+      .put("/user")
+      .set("Authorization", token);
+
+    logger.info(logout.body);
+    logger.info(logout.error);
+    expect(logout.status).toBe(200);
+  });
+  it("should cant logout because token is not valid", async () => {
+    const token = await loginUserToken();
+    console.log(token);
+    const logout = await supertest(app)
+      .put("/user")
+      .set("Authorization", token + "not valid");
+
+    logger.info(logout.body);
+    logger.info(logout.error);
+    expect(logout.status).toBe(404);
+  });
+  it("should cant logout because unauthorized", async () => {
+    const token = await loginUserToken();
+    console.log(token);
+    const logout = await supertest(app).put("/user");
+    // .set("Authorization", token + "not valid");
+
+    logger.info(logout.body);
+    logger.info(logout.error);
+    expect(logout.status).toBe(401);
+  });
+  it("should cant logout because not registered", async () => {
+    // const token = await loginUserToken();
+    // console.log(token);
+    await removeUser();
+    const logout = await supertest(app)
+      .put("/user")
+      .set("Authorization", "not valid");
+
+    logger.info(logout.body);
+    logger.info(logout.error);
+    expect(logout.status).toBe(404);
   });
 });
