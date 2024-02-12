@@ -111,6 +111,7 @@ response success
   "status": "success",
   "message": "User successfully registered.",
   "data": {
+    "id": 1,
     "username": "john_doe",
     "email": "john@example.com",
     "full_name": "John Doe",
