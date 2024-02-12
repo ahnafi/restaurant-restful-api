@@ -168,3 +168,23 @@ describe("logout user PUT /user", () => {
     expect(logout.status).toBe(404);
   });
 });
+
+describe("can get user GET /user/current", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+  afterEach(async () => {
+    await removeUser();
+  });
+
+  it("should can get user ", async () => {
+    const token = await loginUserToken();
+    const userProfile = await supertest(app)
+      .get("/user/current")
+      .set("Authorization", token);
+
+      logger.info(userProfile.body.data)
+      expect(userProfile.status).toBe(200)
+      
+  });
+});
