@@ -1,6 +1,7 @@
 import {
   loginUserValidation,
   registerUserValidation,
+  tokenUserValidation,
 } from "../validation/user-validation";
 import { validate } from "../validation/validate";
 import {
@@ -100,9 +101,9 @@ const login = async (
 };
 
 const logout = async (token: string | undefined): Promise<void> => {
-  if (!token) throw new ResponseError(404, "Unauthorized");
+  const validateToken: string = validate(tokenUserValidation, token);
 
-  const data: auth | null = await getUserByToken(token);
+  const data: auth | null = await getUserByToken(validateToken);
 
   if (!data) throw new ResponseError(404, "Unauthorized");
 
@@ -115,9 +116,9 @@ const logout = async (token: string | undefined): Promise<void> => {
 };
 
 const get = async (token: string | undefined): Promise<GetUserResult> => {
-  if (!token) throw new ResponseError(404, "Unauthorized");
+  const validateToken: string = validate(tokenUserValidation, token);
 
-  const data: auth | null = await getUserByToken(token);
+  const data: auth | null = await getUserByToken(validateToken);
 
   if (!data) throw new ResponseError(404, "Unauthorized");
 
