@@ -26,3 +26,12 @@ export interface auth {
   token?: string | null;
   role?: "ADMIN" | "USER";
 }
+
+export interface GetUserResult {
+  id: number;
+  username: string;
+  email: string;
+  full_name?: string;
+  phone_number?: string;
+  address?: string;
+}

@@ -9,3 +9,4 @@ userRouter.use(authMiddleware);
 
 // user
 userRouter.put("/user", userController.logout);
+userRouter.get("/user/current", userController.get);

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import userServices from "../services/user-services";
-import { auth } from "../types/user-types";
+import { GetUserResult, auth } from "../types/user-types";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -23,18 +23,14 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: "success",
       message: "User successfully login.",
-      data:  token ,
+      data: token,
     });
   } catch (error) {
     next(error);
   }
 };
 
-const logout = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token: string | undefined = req.get("Authorization");
     await userServices.logout(token);
@@ -47,8 +43,23 @@ const logout = async (
   }
 };
 
+const get = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token: string | undefined = req.get("Authorization");
+    const userProfile: GetUserResult = await userServices.get(token);
+    res.status(200).json({
+      status: "success",
+      message: "Get User and Profile",
+      data: userProfile,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   register,
   login,
   logout,
+  get,
 };

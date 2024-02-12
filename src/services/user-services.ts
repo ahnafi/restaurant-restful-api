@@ -8,6 +8,7 @@ import {
   RegisterRequest,
   LoginRequest,
   auth,
+  GetUserResult,
 } from "../types/user-types";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
@@ -63,7 +64,9 @@ const register = async (
   return user;
 };
 
-const login = async (request: LoginRequest): Promise<any> => {
+const login = async (
+  request: LoginRequest
+): Promise<{ token: string | null }> => {
   request = validate(loginUserValidation, request);
 
   const checkUserInDatabase = await prisma.user.findUnique({
@@ -111,8 +114,37 @@ const logout = async (token: string | undefined): Promise<void> => {
   });
 };
 
+const get = async (token: string | undefined): Promise<GetUserResult> => {
+  if (!token) throw new ResponseError(404, "Unauthorized");
+
+  const data: auth | null = await getUserByToken(token);
+
+  if (!data) throw new ResponseError(404, "Unauthorized");
+
+  const profile = await prisma.profile.findUnique({
+    where: {
+      userId: data.id,
+    },
+    select: {
+      address: true,
+      fullName: true,
+      phone: true,
+    },
+  });
+
+  return {
+    id: data.id,
+    email: data.email,
+    username: data.username,
+    address: profile?.address,
+    full_name: profile?.fullName,
+    phone_number: profile?.phone,
+  };
+};
+
 export default {
   register,
   login,
   logout,
+  get,
 };
