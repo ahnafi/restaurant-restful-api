@@ -2,14 +2,12 @@ import {
   UpdateRequestValidation,
   loginUserValidation,
   registerUserValidation,
-  tokenUserValidation,
 } from "../validation/user-validation";
 import { validate } from "../validation/validate";
 import {
   RegistrationResult,
   RegisterRequest,
   LoginRequest,
-  auth,
   GetUserResult,
   UpdateUser,
   UpdateProfilRequest,
@@ -19,7 +17,7 @@ import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import { getUserAuthorized, getUserByToken } from "./services";
+import { getUserAuthorized } from "./services";
 
 const register = async (
   request: RegisterRequest
@@ -179,10 +177,36 @@ const update = async (
   });
 };
 
+const updateProfile = async (
+  token: string | undefined,
+  request: UpdateProfilRequest
+): Promise<UpdateUserProfile> => {
+  const user = await getUserAuthorized(token);
+  request = validate(UpdateRequestValidation, request);
+
+  return prisma.profile.update({
+    where: {
+      userId: user.id,
+    },
+    data: {
+      fullName: request.full_name,
+      address: request.address,
+      phone: request.phone_number,
+    },
+    select: {
+      id: true,
+      fullName: true,
+      address: true,
+      phone: true,
+    },
+  });
+};
+
 export default {
   register,
   login,
   logout,
   get,
   update,
+  updateProfile,
 };

@@ -3,8 +3,9 @@ import userServices from "../services/user-services";
 import {
   GetUserResult,
   RegistrationResult,
+  UpdateProfilRequest,
   UpdateUser,
-  auth,
+  UpdateUserProfile,
 } from "../types/user-types";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
@@ -72,8 +73,30 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     );
     res.status(200).json({
       status: "success",
-      message: "Get User and Profile",
+      message: "update user",
       data: newUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token: string | undefined = req.get("Authorization");
+    const request: UpdateProfilRequest = req.body;
+    const profile: UpdateUserProfile = await userServices.updateProfile(
+      token,
+      request
+    );
+    res.status(200).json({
+      status: "success",
+      message: "update Profile",
+      data: profile,
     });
   } catch (error) {
     next(error);
@@ -86,4 +109,5 @@ export default {
   logout,
   get,
   update,
+  updateProfile,
 };

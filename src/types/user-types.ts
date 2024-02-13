@@ -49,8 +49,8 @@ export interface UpdateProfilRequest {
 
 export class UpdateUserProfile {
   id: number;
-  full_name?: string;
-  phone_number?: string;
+  fullName?: string;
+  phone?: string;
   address?: string;
   constructor(id: number) {
     this.id = id;

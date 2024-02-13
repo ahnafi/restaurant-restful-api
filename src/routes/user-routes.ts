@@ -10,4 +10,5 @@ userRouter.use(authMiddleware);
 // user
 userRouter.put("/user", userController.logout);
 userRouter.get("/user/current", userController.get);
-userRouter.put("/user/current",userController.update);
+userRouter.put("/user/current", userController.update);
+userRouter.put("/user/current/profile", userController.updateProfile);
