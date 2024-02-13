@@ -1,10 +1,10 @@
-import express from "express";
+import express, { Application } from "express";
 import { errorMiddleware } from "../middleware/error-middleware";
 import { userRouter } from "../routes/user-routes";
 import { publicRouter } from "../routes/public-routes";
 import cors from "cors";
 
-export const app = express();
+export const app:Application = express();
 
 // middleware
 app.use(express.json());
