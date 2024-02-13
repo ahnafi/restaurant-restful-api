@@ -1,4 +1,4 @@
-import { createUser, loginUserToken, removeUser } from "./utils";
+import { ShowUser, createUser, loginUserToken, removeUser } from "./utils";
 import supertest from "supertest";
 import { app } from "../src/app/app";
 import { logger } from "../src/app/logging.ts";
@@ -183,8 +183,129 @@ describe("can get user GET /user/current", () => {
       .get("/user/current")
       .set("Authorization", token);
 
-      logger.info(userProfile.body.data)
-      expect(userProfile.status).toBe(200)
-      
+    logger.info(userProfile.body.data);
+    expect(userProfile.status).toBe(200);
+  });
+  it("should cant logout because user isnt login", async () => {
+    // const token = await loginUserToken();
+    const userProfile = await supertest(app)
+      .get("/user/current")
+      .set("Authorization", "hallo");
+
+    logger.info(userProfile.body.data);
+    logger.info(userProfile.error);
+    expect(userProfile.status).toBe(404);
+  });
+});
+
+describe("update user PUT /user/current", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+  afterEach(async () => {
+    await removeUser("budi");
+    await removeUser("test");
+  });
+
+  it("should can update user", async () => {
+    const token = await loginUserToken();
+
+    //
+    console.log(await ShowUser(token));
+    //
+    const newUser = await supertest(app)
+      .put("/user/current")
+      .send({
+        username: "budi",
+        password: "konsol123",
+      })
+      .set("Authorization", token);
+    logger.info(newUser.body.data);
+    logger.info(newUser.error);
+    console.log(await ShowUser(token));
+    expect(newUser.status).toBe(200);
+    expect(newUser.body.data.username).toBe("budi");
+  });
+  it("should can update user data username", async () => {
+    const token = await loginUserToken();
+
+    //
+    console.log(await ShowUser(token));
+    //
+    const newUser = await supertest(app)
+      .put("/user/current")
+      .send({
+        username: "budi",
+      })
+      .set("Authorization", token);
+    logger.info(newUser.body.data);
+    logger.info(newUser.error);
+    console.log(await ShowUser(token));
+    expect(newUser.status).toBe(200);
+    expect(newUser.body.data.username).toBe("budi");
+  });
+  it("should can update user data password ", async () => {
+    const token = await loginUserToken();
+
+    //
+    console.log(await ShowUser(token));
+    //
+    const newUser = await supertest(app)
+      .put("/user/current")
+      .send({
+        password: "budi01geming",
+      })
+      .set("Authorization", token);
+    logger.info(newUser.body.data);
+    logger.info(newUser.error);
+    expect(newUser.status).toBe(200);
+
+    console.log(await ShowUser(token));
+  });
+  it("should cant update user because input inst valid ", async () => {
+    const token = await loginUserToken();
+    //
+    console.log(await ShowUser(token));
+    //
+    const newUser = await supertest(app)
+      .put("/user/current")
+      .send({
+        username: "abc",
+        password: "abc",
+      })
+      .set("Authorization", token);
+    logger.info(newUser.body.data);
+    logger.info(newUser.error);
+    expect(newUser.status).toBe(400);
+
+    console.log(await ShowUser(token));
+  });
+  it("should cant update user because username is already used ", async () => {
+    await supertest(app)
+    .post("/user/register")
+    .send({
+      username: "budi",
+      email:"johnbudi@example.com",
+      password: "password",
+      full_name: "John Doe",
+      phone_number: "123-456-7890",
+      address: "123 Main Street, City, Country",
+    });
+    const token = await loginUserToken();
+    //
+    console.log(await ShowUser(token));
+    //
+    const newUser = await supertest(app)
+      .put("/user/current")
+      .send({
+        username: "budi",
+        password: "abc1234543",
+      })
+      .set("Authorization", token);
+    logger.info(newUser.body.data);
+    logger.info(newUser.error);
+    expect(newUser.status).toBe(409);
+
+    console.log(await ShowUser(token));
   });
 });

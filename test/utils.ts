@@ -2,29 +2,38 @@ import supertest from "supertest";
 import { prisma } from "../src/app/database";
 import { app } from "../src/app/app";
 
-export const removeUser = async () => {
+export const removeUser = async (name?: string) => {
   return prisma.user.deleteMany({
     where: {
-      username: "test",
+      username: name || "test",
     },
   });
 };
 
-export const createUser = async () => {
-  return supertest(app).post("/user/register").send({
-    username: "test",
-    email: "john@example.com",
-    password: "password",
-    full_name: "John Doe",
-    phone_number: "123-456-7890",
-    address: "123 Main Street, City, Country",
-  });
+export const createUser = async (name?: String) => {
+  return supertest(app)
+    .post("/user/register")
+    .send({
+      username: name || "test",
+      email:"john@example.com",
+      password: "password",
+      full_name: "John Doe",
+      phone_number: "123-456-7890",
+      address: "123 Main Street, City, Country",
+    });
 };
 
-export const loginUserToken = async()=>{
+export const loginUserToken = async () => {
   const token = await supertest(app).post("/user").send({
     email: "john@example.com",
     password: "password",
-  })
-  return token.body.data.token
-}
+  });
+  if (token.error) console.log(token.error.message);
+  return token.body.data.token;
+};
+
+export const ShowUser = (token: string) => {
+  return prisma.user.findFirst({
+    where: { token },
+  });
+};
