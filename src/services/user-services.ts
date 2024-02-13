@@ -1,4 +1,5 @@
 import {
+  UpdateRequestValidation,
   loginUserValidation,
   registerUserValidation,
   tokenUserValidation,
@@ -10,6 +11,7 @@ import {
   LoginRequest,
   auth,
   GetUserResult,
+  UpdateUser,
 } from "../types/user-types";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
@@ -143,9 +145,52 @@ const get = async (token: string | undefined): Promise<GetUserResult> => {
   };
 };
 
+const update = async (
+  token: string | undefined,
+  request: UpdateUser
+): Promise<RegistrationResult> => {
+  const validateToken: string = validate(tokenUserValidation, token);
+  const getUser: auth | null = await getUserByToken(validateToken);
+  if (!getUser) throw new ResponseError(404, "Unauthorized");
+
+  request = validate(UpdateRequestValidation, request);
+
+  const newUser: UpdateUser = new UpdateUser();
+
+  if (request.username) {
+    const checkUserInDatabase = await prisma.user.findUnique({
+      where: { username: request.username },
+    });
+    if (checkUserInDatabase)
+      throw new ResponseError(409, "username is already used");
+    newUser.username = request.username;
+  }
+
+  if (request.password) {
+    request.password = await bcrypt.hash(request.password, 10);
+    newUser.password = request.password;
+  }
+
+  return prisma.user.update({
+    where: {
+      id: getUser.id,
+    },
+    data: {
+      username: newUser.username,
+      password: newUser.password,
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+    },
+  });
+};
+
 export default {
   register,
   login,
   logout,
   get,
+  update,
 };

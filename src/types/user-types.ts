@@ -35,3 +35,24 @@ export interface GetUserResult {
   phone_number?: string;
   address?: string;
 }
+
+export class UpdateUser {
+  username?: string;
+  password?: string;
+}
+
+export interface UpdateProfilRequest {
+  full_name?: string;
+  phone_number?: string;
+  address?: string;
+}
+
+export class UpdateUserProfile {
+  id: number;
+  full_name?: string;
+  phone_number?: string;
+  address?: string;
+  constructor(id: number) {
+    this.id = id;
+  }
+}

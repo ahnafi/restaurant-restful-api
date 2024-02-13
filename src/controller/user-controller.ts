@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import userServices from "../services/user-services";
-import { GetUserResult, auth } from "../types/user-types";
+import {
+  GetUserResult,
+  RegistrationResult,
+  UpdateUser,
+  auth,
+} from "../types/user-types";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -57,9 +62,28 @@ const get = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const update = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token: string | undefined = req.get("Authorization");
+    const request: UpdateUser = req.body;
+    const newUser: RegistrationResult = await userServices.update(
+      token,
+      request
+    );
+    res.status(200).json({
+      status: "success",
+      message: "Get User and Profile",
+      data: newUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   register,
   login,
   logout,
   get,
+  update,
 };
