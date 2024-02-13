@@ -12,12 +12,14 @@ import {
   auth,
   GetUserResult,
   UpdateUser,
+  UpdateProfilRequest,
+  UpdateUserProfile,
 } from "../types/user-types";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import { getUserByToken } from "./services";
+import { getUserAuthorized, getUserByToken } from "./services";
 
 const register = async (
   request: RegisterRequest
@@ -103,11 +105,7 @@ const login = async (
 };
 
 const logout = async (token: string | undefined): Promise<void> => {
-  const validateToken: string = validate(tokenUserValidation, token);
-
-  const data: auth | null = await getUserByToken(validateToken);
-
-  if (!data) throw new ResponseError(404, "Unauthorized");
+  const data = await getUserAuthorized(token);
 
   await prisma.user.update({
     where: { id: data.id },
@@ -118,11 +116,7 @@ const logout = async (token: string | undefined): Promise<void> => {
 };
 
 const get = async (token: string | undefined): Promise<GetUserResult> => {
-  const validateToken: string = validate(tokenUserValidation, token);
-
-  const data: auth | null = await getUserByToken(validateToken);
-
-  if (!data) throw new ResponseError(404, "Unauthorized");
+  const data = await getUserAuthorized(token);
 
   const profile = await prisma.profile.findUnique({
     where: {
@@ -149,9 +143,7 @@ const update = async (
   token: string | undefined,
   request: UpdateUser
 ): Promise<RegistrationResult> => {
-  const validateToken: string = validate(tokenUserValidation, token);
-  const getUser: auth | null = await getUserByToken(validateToken);
-  if (!getUser) throw new ResponseError(404, "Unauthorized");
+  const getUser = await getUserAuthorized(token);
 
   request = validate(UpdateRequestValidation, request);
 
