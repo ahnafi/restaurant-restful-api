@@ -11,6 +11,7 @@ POST /user/
 PUT /user/
 GET /user/current
 PUT /user/current
+PUT /user/current/profile
 
 <!-- menu -->
 

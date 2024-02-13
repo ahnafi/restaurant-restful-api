@@ -131,6 +131,7 @@ response error
 ```
 
 ## update user
+- PUT /user/current
 
 - unauthorized
 
@@ -139,11 +140,7 @@ request body
 ```json
 {
   "username": "john_doe",
-  "email": "john@example.com",
   "password": "password123",
-  "full_name": "John Doe",
-  "phone_number": "123-456-7890",
-  "address": "123 Main Street, City, Country"
 }
 ```
 
@@ -157,6 +154,41 @@ response success
     "id": 10001,
     "username": "jon",
     "email": "john@example.com",
+  }
+}
+```
+
+response error
+
+```json
+{
+  "status": "error",
+  "message": "update failed. Invalid email format."
+}
+```
+## update user profile
+- PUT /user/current/profile
+
+- unauthorized
+
+request body
+
+```json
+{
+  "full_name": "John Doe",
+  "phone_number": "123-456-7890",
+  "address": "123 Main Street, City, Country"
+}
+```
+
+response success
+
+```json
+{
+  "status": "success",
+  "message": "User profile successfully update.",
+  "data": {
+    "id": 10001,
     "full_name": "John Doe",
     "phone_number": "123-456-7890",
     "address": "123 Main Street, City, Country"
@@ -169,6 +201,6 @@ response error
 ```json
 {
   "status": "error",
-  "message": "update failed. Invalid email format."
+  "message": "update failed. Invalid format."
 }
 ```
