@@ -71,7 +71,7 @@ describe("login user - POST /user/", () => {
   it("should can login", async () => {
     const token = await supertest(app).post("/user").send({
       email: "john@example.com",
-      password: "password123",
+      password: "password",
     });
 
     logger.info(token.body);
@@ -281,11 +281,9 @@ describe("update user PUT /user/current", () => {
     console.log(await ShowUser(token));
   });
   it("should cant update user because username is already used ", async () => {
-    await supertest(app)
-    .post("/user/register")
-    .send({
+    await supertest(app).post("/user/register").send({
       username: "budi",
-      email:"johnbudi@example.com",
+      email: "johnbudi@example.com",
       password: "password",
       full_name: "John Doe",
       phone_number: "123-456-7890",
@@ -307,5 +305,60 @@ describe("update user PUT /user/current", () => {
     expect(newUser.status).toBe(409);
 
     console.log(await ShowUser(token));
+  });
+});
+
+describe("update user profile PUT /user/current/profile", () => {
+  beforeEach(async () => {
+    await createUser();
+  });
+  afterEach(async () => {
+    await removeUser("test");
+  });
+
+  it("should can update user profile", async () => {
+    const token = await loginUserToken();
+    const profile = await supertest(app)
+      .put("/user/current/profile")
+      .set("Authorization", token)
+      .send({
+        full_name: "slebew",
+        phone_number: "0812211221",
+        address: "indonesia",
+      });
+
+    logger.info(profile.body.data);
+    logger.info(profile.error);
+    expect(profile.status).toBe(200);
+  });
+  it("should can update user profile data only full name", async () => {
+    const token = await loginUserToken();
+    const profile = await supertest(app)
+      .put("/user/current/profile")
+      .set("Authorization", token)
+      .send({
+        full_name: "slebew",
+        // phone_number: "0812211221",
+        // address: "indonesia",
+      });
+
+    logger.info(profile.body.data);
+    logger.info(profile.error);
+    expect(profile.status).toBe(200);
+  });
+  it("should cant update user profile because unauthorize", async () => {
+    const token = await loginUserToken();
+    const profile = await supertest(app)
+      .put("/user/current/profile")
+      // .set("Authorization", token)
+      .send({
+        full_name: "slebew",
+        phone_number: "0812211221",
+        address: "indonesia",
+      });
+
+    logger.info(profile.body.data);
+    logger.info(profile.error);
+    expect(profile.status).toBe(401);
   });
 });
