@@ -29,7 +29,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: "success",
       message: "User successfully login.",
-      data: token,
+      data: {token},
     });
   } catch (error) {
     next(error);

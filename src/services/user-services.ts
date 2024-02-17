@@ -67,9 +67,7 @@ const register = async (
   return user;
 };
 
-const login = async (
-  request: LoginRequest
-): Promise<{ token: string | null }> => {
+const login = async (request: LoginRequest): Promise<string | null> => {
   request = validate(loginUserValidation, request);
 
   const checkUserInDatabase = await prisma.user.findUnique({
@@ -89,7 +87,7 @@ const login = async (
   if (!checkPassword)
     throw new ResponseError(404, "email or password is wrong");
 
-  return prisma.user.update({
+  const newToken = await prisma.user.update({
     where: {
       id: checkUserInDatabase.id,
     },
@@ -100,6 +98,8 @@ const login = async (
       token: true,
     },
   });
+
+  return newToken.token;
 };
 
 const logout = async (token: string | undefined): Promise<void> => {
