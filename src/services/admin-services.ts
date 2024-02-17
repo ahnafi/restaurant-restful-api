@@ -4,9 +4,12 @@ import {
   AdminRegisterRequest,
   AdminRegisterResult,
 } from "../types/admin-types";
+import { LoginRequest } from "../types/user-types";
 import { registerAdminValidation } from "../validation/admin-validation";
 import { validate } from "../validation/validate";
 import bcrypt from "bcrypt";
+import userServices from "./user-services";
+import { getUserAuthorized, getUserByToken } from "./services";
 
 const register = async (
   request: AdminRegisterRequest
@@ -46,6 +49,16 @@ const register = async (
   });
 };
 
+const login = async (request: LoginRequest): Promise<string | null> => {
+  const token: string | null = await userServices.login(request);
+  const isAdmin = await getUserByToken(token);
+
+  if (isAdmin?.role == "ADMIN") {
+    return token;
+  } else throw new ResponseError(401, "your account is not admin");
+};
+
 export default {
   register,
+  login,
 };

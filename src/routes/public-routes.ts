@@ -10,3 +10,4 @@ publicRouter.post("/user", userController.login);
 
 //admin
 publicRouter.post("/admin/register", adminController.register);
+publicRouter.post("/admin", adminController.login);
