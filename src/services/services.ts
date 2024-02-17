@@ -4,7 +4,9 @@ import { auth } from "../types/user-types";
 import { tokenUserValidation } from "../validation/user-validation";
 import { validate } from "../validation/validate";
 
-export const getUserByToken = async (token: string): Promise<auth | null> => {
+export const getUserByToken = async (
+  token: string | null
+): Promise<auth | null> => {
   return prisma.user.findFirst({
     where: {
       token,
