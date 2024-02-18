@@ -15,7 +15,7 @@ export const createUser = async (name?: String) => {
     .post("/user/register")
     .send({
       username: name || "test",
-      email:"john@example.com",
+      email: "john@example.com",
       password: "password",
       full_name: "John Doe",
       phone_number: "123-456-7890",
@@ -36,4 +36,14 @@ export const ShowUser = (token: string) => {
   return prisma.user.findFirst({
     where: { token },
   });
+};
+
+export const createAdmin = (name?: string) => {
+  return supertest(app)
+    .post("/admin/register")
+    .send({
+      username: name || "test",
+      email: "john@example.com",
+      password: "password",
+    });
 };
