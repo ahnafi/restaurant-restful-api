@@ -1,5 +1,5 @@
 import supertest from "supertest";
-import { createUser, removeUser } from "./utils";
+import { createAdmin, createUser, removeUser } from "./utils";
 import { app } from "../src/app/app";
 import { logger } from "../src/app/logging";
 
@@ -53,4 +53,60 @@ describe("register admin api POST /admin/register", () => {
     logger.info(admin.error);
     expect(admin.status).toBe(409);
   });
+});
+
+describe('login admin - POST /admin', () => {
+  beforeEach(async()=>{
+    await createAdmin()
+  })
+  afterEach(async()=>{
+    await removeUser()
+  })
+
+  it('should can login admin', async() => {
+    const admin = await supertest(app).post("/admin").send({
+      email:"john@example.com",
+      password:"password"
+    })
+
+    logger.info(admin.body)
+    expect(admin.status).toBe(200)
+  });
+  it('should cant login admin because email or password is wrong', async() => {
+    const admin = await supertest(app).post("/admin").send({
+      email:"johna@example.com",
+      password:"passworda"
+    })
+
+    logger.info(admin.body)
+    expect(admin.status).toBe(404)
+  });
+  it('should cant login admin because  password is wrong', async() => {
+    const admin = await supertest(app).post("/admin").send({
+      email:"john@example.com",
+      password:"passworda"
+    })
+
+    logger.info(admin.body)
+    expect(admin.status).toBe(404)
+  });
+  it('should cant login admin because email is wrong', async() => {
+    const admin = await supertest(app).post("/admin").send({
+      email:"johna@example.com",
+      password:"password"
+    })
+
+    logger.info(admin.body)
+    expect(admin.status).toBe(404)
+  });
+  it('should cant login admin because email or password is required', async() => {
+    const admin = await supertest(app).post("/admin").send({
+      // email:"johna@example.com",
+      // password:"password"
+    })
+
+    logger.info(admin.body)
+    expect(admin.status).toBe(400)
+  });
+
 });
