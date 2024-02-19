@@ -10,12 +10,12 @@ export const removeUser = async (name?: string) => {
   });
 };
 
-export const createUser = async (name?: String) => {
-  return supertest(app)
+export const createUser = async (name?: string) => {
+  await supertest(app)
     .post("/user/register")
     .send({
       username: name || "test",
-      email: "john@example.com",
+      email: name ? name + "@example.com" : "john@example.com",
       password: "password",
       full_name: "John Doe",
       phone_number: "123-456-7890",
@@ -23,11 +23,13 @@ export const createUser = async (name?: String) => {
     });
 };
 
-export const loginUserToken = async () => {
-  const token = await supertest(app).post("/user").send({
-    email: "john@example.com",
-    password: "password",
-  });
+export const loginUserToken = async (name?: string) => {
+  const token = await supertest(app)
+    .post("/user")
+    .send({
+      email: name ? `${name}@example.com` : "john@example.com",
+      password: "password",
+    });
   if (token.error) console.log(token.error.message);
   return token.body.data.token;
 };
