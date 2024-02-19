@@ -9,7 +9,11 @@ import { registerAdminValidation } from "../validation/admin-validation";
 import { validate } from "../validation/validate";
 import bcrypt from "bcrypt";
 import userServices from "./user-services";
-import { getUserAuthorized, getUserByToken } from "./services";
+import {
+  getAdminAuthorized,
+  getUserAuthorized,
+  getUserByToken,
+} from "./services";
 
 const register = async (
   request: AdminRegisterRequest
@@ -58,7 +62,19 @@ const login = async (request: LoginRequest): Promise<string | null> => {
   } else throw new ResponseError(401, "your account is not admin");
 };
 
+const logout = async (token: string | undefined): Promise<void> => {
+  const data = await getAdminAuthorized(token);
+
+  await prisma.user.update({
+    where: { id: data.id },
+    data: {
+      token: null,
+    },
+  });
+};
+
 export default {
   register,
   login,
+  logout
 };

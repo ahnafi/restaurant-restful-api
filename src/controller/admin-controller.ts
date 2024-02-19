@@ -30,7 +30,21 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token: string | undefined = req.get("Authorization");
+    await adminServices.logout(token)
+    res.status(200).json({
+      status: "success",
+      message: "admin successfully logout.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   register,
   login,
+  logout,
 };
