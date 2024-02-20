@@ -55,7 +55,7 @@ model Menu {
 
 model Category {
   id   Int    @id @default(autoincrement())
-  name String @db.VarChar(100)
+  name String @unique @db.VarChar(100)
   Menu Menu[]
 
   @@map("categories")
