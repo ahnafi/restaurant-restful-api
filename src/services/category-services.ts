@@ -1,12 +1,11 @@
+import { Category } from "@prisma/client";
 import { prisma } from "../app/database";
 import ResponseError from "../error/response-error";
-import { createCategoryValiadation } from "../validation/category-validation";
+import {
+  createCategoryValiadation,
+  removeCategoryValidation,
+} from "../validation/category-validation";
 import { validate } from "../validation/validate";
-
-export interface Category {
-  id: number;
-  name: string;
-}
 
 export const checkCategoryInDatabase = async (
   name: string | undefined
@@ -34,6 +33,17 @@ const create = async (request: string): Promise<Category> => {
   });
 };
 
+const remove = async (id: number): Promise<void> => {
+  id = validate(removeCategoryValidation, id);
+
+  await prisma.category.delete({
+    where: {
+      id,
+    },
+  });
+};
+
 export default {
   create,
+  remove,
 };
