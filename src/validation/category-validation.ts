@@ -2,4 +2,6 @@ import Joi from "joi";
 
 const createCategoryValiadation = Joi.string().min(2).max(100).required();
 
-export { createCategoryValiadation };
+const removeCategoryValidation = Joi.number().min(0).required().positive();
+
+export { createCategoryValiadation, removeCategoryValidation };
