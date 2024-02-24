@@ -43,7 +43,23 @@ const remove = async (id: number): Promise<void> => {
   });
 };
 
+const get = async (
+  id: number
+): Promise<{ id: number; name: string } | null> => {
+  id = validate(removeCategoryValidation, id);
+
+  const category = await prisma.category.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!category) throw new ResponseError(404, "category is not found");
+  return category;
+};
+
 export default {
   create,
   remove,
+  get,
 };
