@@ -12,7 +12,7 @@ request body
 {
   "name": "example",
   "price": "150.000",
-  "category": "pencuci mulut",
+  "category": 1,
   "description": "blabla" //optional
 }
 ```
@@ -31,9 +31,12 @@ response success
     "id": 1,
     "name": "example",
     "price": "150.000",
-    "category": "pencuci mulut",
     "description": "blabla",
-    "image": "/public/img/example.jpg"
+    "image": "/public/img/example.jpg",
+    "category": {
+      "id": 1,
+      "name": "makanan"
+    }
   }
 }
 ```
@@ -59,7 +62,7 @@ request body
 {
   "name": "example",
   "price": "150.000",
-  "category": "pencuci mulut",
+  "category": 1,
   "description": "blabla" //optional
 }
 ```
@@ -78,9 +81,12 @@ response success
     "id": 1,
     "name": "example",
     "price": "150.000",
-    "category": "pencuci mulut",
     "description": "blabla",
-    "image": "/public/img/example.jpg"
+    "image": "/public/img/example.jpg",
+    "category": {
+      "id": 1,
+      "name": "makanan"
+    }
   }
 }
 ```
@@ -132,9 +138,12 @@ response success
     "id": 1,
     "name": "example",
     "price": "150.000",
-    "category": "pencuci mulut",
     "description": "blabla",
-    "image": "/public/img/example.jpg"
+    "image": "/public/img/example.jpg",
+    "category": {
+      "id": 1,
+      "name": "makanan"
+    }
   }
 }
 ```
@@ -166,9 +175,12 @@ response success
       "id": 1,
       "name": "example",
       "price": "150.000",
-      "category": "pencuci mulut",
       "description": "blabla",
-      "image": "/public/img/example.jpg"
+      "image": "/public/img/example.jpg",
+      "category": {
+        "id": 1,
+        "name": "makanan"
+      }
     },
     { "": "" }
   ]
