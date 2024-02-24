@@ -45,6 +45,7 @@ model Menu {
   name        String    @db.VarChar(100)
   price       String    @db.VarChar(250)
   description String?   @db.VarChar(250)
+  image       String    @db.VarChar(100)
   //
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  Int
