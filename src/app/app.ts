@@ -18,9 +18,9 @@ app.get("/", (req, res) => {
   res.send("hello world");
 });
 
-app.use(adminRouter);
 app.use(publicRouter);
 app.use(userRouter);
+app.use(adminRouter);
 
 // error handling
 app.use(errorMiddleware);
