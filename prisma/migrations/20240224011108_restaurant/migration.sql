@@ -28,7 +28,9 @@ CREATE TABLE `profiles` (
 CREATE TABLE `menus` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
+    `price` VARCHAR(250) NOT NULL,
     `description` VARCHAR(250) NULL,
+    `image` VARCHAR(100) NOT NULL,
     `categoryId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
